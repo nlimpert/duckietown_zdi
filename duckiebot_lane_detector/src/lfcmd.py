@@ -30,7 +30,15 @@ class LaneDetector:
         np_arr = np.fromstring(msg.data, np.uint8)
         image  = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+#        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        kernel = np.ones((5,5),np.float32)/25
+        dst = cv2.filter2D(gray,-1,kernel)
+        ret,thresh1 = cv2.threshold(dst,127,255,cv2.THRESH_BINARY)
+
+#        cv2.imshow('cv_img', thresh1)
+#        cv2.waitKey(2)
 
         lower = np.array([22, 93, 0], dtype="uint8")
         upper = np.array([45, 255, 255], dtype="uint8")
@@ -44,7 +52,7 @@ class LaneDetector:
         red_obj_con = red_obj_con[0] if len(red_obj_con) == 2 else red_obj_con[1]
 
 
-        cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cv2.findContours(thresh1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if len(cnts) == 2 else cnts[1]
         drive_dir = String()
         redline = Bool()
@@ -52,10 +60,8 @@ class LaneDetector:
         redline.data = False
         x1 = 0
 
-#        cv2.drawContours(image, cnts, -1, (0, 255, 0), 3) 
-#
-#        cv2.imshow('cv_img', image)
-#        cv2.waitKey(2)
+        cv2.drawContours(image, cnts, -1, (0, 255, 0), 3)
+
 
         if len(cnts) != 0:
             x,y,w,h = cv2.boundingRect(cnts[0])
@@ -81,6 +87,8 @@ class LaneDetector:
             self.i += 1
         self.red_line_detected_.publish(redline)
 
+#        cv2.imshow('cv_img', image)
+#        cv2.waitKey(1)
 
 
 
