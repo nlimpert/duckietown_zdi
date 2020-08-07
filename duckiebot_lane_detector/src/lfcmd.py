@@ -57,14 +57,6 @@ high_H = 30
 high_S = 66
 high_V = 255
 
-#low_H_name = 'Low H'
-#low_S_name = 'Low S'
-#low_V_name = 'Low V'
-#high_H_name = 'High H'
-#high_S_name = 'High S'
-#high_V_name = 'High V'
-#window_detection_name = 'Lane Detection'
-
 
 class LaneDetector:
 
@@ -78,33 +70,17 @@ class LaneDetector:
         #self.timer = self.create_timer(timer_period, self.sub_img_cb)
         self.i = 0
 
-        cv2.namedWindow(window_detection_name)
-        cv2.createTrackbar(low_H_name, window_detection_name , low_H, max_value_H, on_low_H_thresh_trackbar)
-        cv2.createTrackbar(high_H_name, window_detection_name , high_H, max_value_H, on_high_H_thresh_trackbar)
-        cv2.createTrackbar(low_S_name, window_detection_name , low_S, max_value, on_low_S_thresh_trackbar)
-        cv2.createTrackbar(high_S_name, window_detection_name , high_S, max_value, on_high_S_thresh_trackbar)
-        cv2.createTrackbar(low_V_name, window_detection_name , low_V, max_value, on_low_V_thresh_trackbar)
-        cv2.createTrackbar(high_V_name, window_detection_name , high_V, max_value, on_high_V_thresh_trackbar)
-
-
         rospy.spin()
 
     def sub_img_cb(self, msg, info):
         np_arr = np.fromstring(msg.data, np.uint8)
         image  = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-#        image = cv2.imdecode(np.array(msg.data), 1)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-#       Values for simulation
-
-#        lower = np.array([22, 93, 0], dtype="uint8")
-#        upper = np.array([45, 255, 255], dtype="uint8")
-#        mask = cv2.inRange(image, lower, upper)
-        mask = cv2.inRange(image, (low_H, low_S, low_V), (high_H, high_S, high_V))
-
-#        cv2.imshow('cv_img', mask)
-#        cv2.waitKey(2)
+        lower = np.array([22, 93, 0], dtype="uint8")
+        upper = np.array([45, 255, 255], dtype="uint8")
+        mask = cv2.inRange(image, lower, upper)
 
         r_low = np.array([170, 100, 0], dtype="uint8")
         r_up = np.array([180, 255, 255], dtype="uint8")
