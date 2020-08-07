@@ -37,8 +37,6 @@ class LaneDetector:
         dst = cv2.filter2D(gray,-1,kernel)
         ret,thresh1 = cv2.threshold(dst,127,255,cv2.THRESH_BINARY)
 
-#        cv2.imshow('cv_img', thresh1)
-#        cv2.waitKey(2)
 
         lower = np.array([22, 93, 0], dtype="uint8")
         upper = np.array([45, 255, 255], dtype="uint8")
@@ -51,6 +49,12 @@ class LaneDetector:
         red_obj_con = cv2.findContours(mask2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         red_obj_con = red_obj_con[0] if len(red_obj_con) == 2 else red_obj_con[1]
 
+
+        color = (0, 0, 0)
+        thresh1 = cv2.rectangle(thresh1, (0,0), (thresh1.shape[1], thresh1.shape[0] * 2/3), color, -1)
+
+#        cv2.imshow('cv_img', thresh1)
+#        cv2.waitKey(1)
 
         cnts = cv2.findContours(thresh1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         cnts = cnts[0] if len(cnts) == 2 else cnts[1]
